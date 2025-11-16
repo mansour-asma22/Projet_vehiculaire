@@ -12,10 +12,14 @@ Ce projet permet de capturer, transmettre et visualiser des paquets CAM/ITS via 
 
 ## Prérequis
 - Python 3.10+  
-- Mosquitto MQTT  
-- Bibliothèques Python :
-  pip install scapy paho-mqtt pyshark folium flask
-  Wireshark
+- Mosquitto MQTT  : sudo apt install mosquitto mosquitto-clients -y
+- Bibliothèques Python : pip install scapy paho-mqtt pyshark folium flask
+         scapy            : Manipulation des paquets
+         paho-mqtt        : Client MQTT
+         pyshark          : Analyse de paquets PCAP
+         flask            : Interface web
+         folium           : Cartographie et visualisation géographique
+ - Wireshark : sudo apt install wireshark tshark -y
  ## Exécution
 
 Lancer le broker MQTT (Mosquitto) : sudo service mosquitto start
