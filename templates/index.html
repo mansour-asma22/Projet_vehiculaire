@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi des Véhicules 🚗🗺️</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        function refreshMap() {
+            $.getJSON("/data", function (data) {
+                $("#vehicule-list").empty();  // Vider la liste avant mise à jour
+                let content = "";
+
+                Object.keys(data).forEach(stationId => {
+                    let lastPos = data[stationId]["positions"][data[stationId]["positions"].length - 1];
+                    let vehiculeColor = data[stationId]["color"];
+                    content += `
+                    <div class="col-md-4">
+                    <div class="card shadow-lg mb-3" style="border-left: 5px solid ${vehiculeColor};">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <span class="color-box" style="background-color: ${vehiculeColor};"></span>
+                                Véhicule ${stationId}
+                            </h5>
+                            <p class="card-text">
+                                <b> 📍 Latitude:</b> ${lastPos.coordinates[1].toFixed(5)} <br>
+                                <b> 📍 Longitude:</b> ${lastPos.coordinates[0].toFixed(5)} <br>
+                                <b> 🔥 Vitesse:</b> ${lastPos.speed.toFixed(2)} km/h
+                            </p>
+                        </div>
+                    </div>
+                </div>`;
+                });
+
+                $("#vehicule-list").html(content);
+                document.getElementById('map').src = "/map?_=" + new Date().getTime();
+            });
+        }
+        setTimeout(() => {
+            document.body.classList.add("loaded");
+        }, 1000);
+        setInterval(refreshMap, 3000);
+    </script>
+
+    <style>
+        /* Arrière-plan dynamique */
+        body {
+            background-image: url('/static/fond');
+            background-size: contain;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            height: auto;
+            /* Permet au conteneur de s'adapter au contenu */
+            max-height: 85vh;
+            /* Ne prend pas toute la hauteur de l'écran */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card {
+            min-width: 250px;
+            /* Largeur minimale des cartes */
+            max-width: 300px;
+            /* Largeur maximale pour éviter l'étirement */
+            min-height: 180px;
+            /* Hauteur minimale pour uniformiser */
+            background: rgba(255, 255, 255, 0.9);
+            /* Fond semi-transparent */
+            border-radius: 10px;
+            /* Coins arrondis */
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+            /* Ombre */
+            overflow: hidden;
+            /* Évite les dépassements */
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Centre le contenu */
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-text {
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            text-align: left;
+        }
+
+        .color-box {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            border: 1px solid black;
+        }
+
+
+        iframe {
+            width: 100%;
+            height: 85vh;
+            border: none;
+        }
+
+        .overlay {
+            width: 100%;
+            max-width: 95%;
+            height: 85vh;
+            margin: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: nowrap;
+            align-items: stretch;
+            justify-content: space-between;
+            gap: 15px;
+            height: 85vh;
+        }
+
+        .col-md-8 {
+            display: flex;
+            flex-direction: column;
+            width: 65%;
+            height: 100%;
+        }
+
+        .col-md-4 {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            width: 35%;
+            height: 100%;
+        }
+
+        .info-panel {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 15px;
+            color: black;
+            min-height: 300px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .scrollable-list {
+            max-height: 250px;
+            overflow-y: auto;
+            width: 100%;
+        }
+
+        footer {
+            background-color: #212529;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+            position: relative;
+        }
+
+
+
+        h2 {
+            font-weight: bold;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+            color: white;
+            /* Rend le titre blanc */
+            text-align: center;
+            /* Centrage du texte */
+            font-weight: bold;
+            /* Texte en gras */
+        }
+
+        #content {
+            flex: 1;
+        }
+
+        /* footer {
+            background-color: #212529;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            width: 100%;
+        } */
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">🚗INTERFACE WEB DE SUIVIE DE TRAFFIC EN TEMPS RÉEL</a>
+            <span class="navbar-text text-light">
+                🔄 Mise à jour en temps réel
+            </span>
+        </div>
+    </nav>
+
+    <!-- Conteneur principal -->
+    <div id="content">
+        <div class="overlay">
+            <div class="container mt-3">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h2 class="text-center">🚗 Suivi des Véhicules en Temps Réel 🗺️</h2>
+                        <iframe id="map" src="/map"></iframe>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="info-panel">
+                            <h4>📊 Informations des Véhicules</h4>
+                            <ul id="vehicule-list" class="list-group scrollable-list">
+                                <li class="list-group-item">En attente de données...</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-light text-center py-3 mt-4">
+        Communication MQTT avec Scapy • Développé Par <strong>@HP, @Asma et @Alae</strong>
+    </footer>
+</body>
+
+
+</html>
